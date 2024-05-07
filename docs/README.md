@@ -1,6 +1,6 @@
 # Documentation
 
-TyDeT (Typescript Developer Tools) Core MySQL is a module to handle a connection with a Redis Database.
+TyDeT (Typescript Developer Tools) Core Redis is a module to handle a connection with a Redis Database.
 
 ## Basic usage
 
