@@ -3,7 +3,7 @@ import { CoreError } from "tydet-core";
 export class RedisCoreError extends CoreError {
   name: string
 
-  constructor(message?: string, sql?: string) {
+  constructor(message?: string) {
     super(message);
     this.name = "RedisCoreError";
     this.message = message;
