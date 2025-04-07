@@ -78,3 +78,17 @@ It's a combination between DEL and HDEL methods.
 
 * **key**: The identifier
 * **field**: The field to delete. If it's defined then only the field will be deleted. If it's null, then the DEL method will be called and all the fields and the key will be deleted.
+
+
+### Redis Callbacks
+
+The are some callbacks that you can define on the configuration of this service. The callbacks are called for the following events:
+
+#### `onReady(host: string, port: number, service: RedisConnector, context: Context) => void`
+
+- **host**: The host defined in the connection settings
+- **port**: The port defined in the connection settings
+- **service**: The Express Service.
+- **context**: The TyDeT Context.
+
+This callback is executed when the redis connector is ready.

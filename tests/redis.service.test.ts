@@ -1,7 +1,8 @@
+import { RedisCoreError } from "../src/redis.error";
 import { RedisConnector } from "../src/redis.service";
 import { Context } from "tydet-core";
 
-const DB_HOST = "192.168.68.119"
+const DB_HOST = "localhost"
 
 describe("Redis Service", () => {
   let app = new Context()
@@ -66,6 +67,6 @@ describe("Redis Service", () => {
 
   afterAll(async () => {
     // close service
-    await app.unmountServices()
+    await app.ejectAllServices()
   })
 })

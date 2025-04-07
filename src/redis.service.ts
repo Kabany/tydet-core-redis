@@ -18,8 +18,12 @@ const DB_PORT = "DB_PORT";
 const DB_USER = "DB_USER";
 const DB_PASS = "DB_PASS";
 
+export type RedisListeningCallback = (host: string, port: number, service: RedisConnector, context: Context) => void
+
 export class RedisConnector extends Service {
   connection: RedisClientType
+
+  onReady: RedisListeningCallback
 
   constructor(params: RedisParamsInterface) {
     let map = new Map()
@@ -36,7 +40,7 @@ export class RedisConnector extends Service {
         await this.connection.connect()
       }
     } catch(err) {
-      throw new RedisCoreError(err)
+      throw new RedisCoreError(err instanceof Error ? err.toString() : `${err}`)
     }
   }
 
@@ -46,7 +50,7 @@ export class RedisConnector extends Service {
         await this.connection.disconnect()
       }
     } catch(err) {
-      throw new RedisCoreError(err)
+      throw new RedisCoreError(err instanceof Error ? err.toString() : `${err}`)
     }
   }
 
@@ -81,7 +85,29 @@ export class RedisConnector extends Service {
     await this.connect()
   }
 
-  override async beforeUnmount() {
+  override async afterMount() {
+    if (this.onReady) this.onReady(this.params.get(DB_HOST), this.params.get(DB_PORT) as number, this, this.context)
+  }
+
+  override async beforeReset() {
+    await this.disconnect()
+  }
+
+  override async onReset() {
+    let user = this.params.get(DB_USER)
+    let pass = this.params.get(DB_PASS)
+    let cred = user != null || pass != null ? "" : `${user}:${pass}@`
+    this.connection = await createClient({
+      url: `redis://${cred}${this.params.get(DB_HOST)}:${this.params.get(DB_PORT)}`
+    })
+    await this.connect()
+  }
+
+  override async afterReset() {
+    if (this.onReady) this.onReady(this.params.get(DB_HOST), this.params.get(DB_PORT) as number, this, this.context)
+  }
+
+  override async onEject() {
     await this.disconnect()
   }
 
