@@ -1,6 +1,6 @@
 {
   "name": "tydet-core-redis",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "TyDeT Core Redis is a Typescript & Javascript library for TyDeT Core to handle connections with a Redis Database.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

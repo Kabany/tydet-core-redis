@@ -18,12 +18,13 @@ const DB_PORT = "DB_PORT";
 const DB_USER = "DB_USER";
 const DB_PASS = "DB_PASS";
 
-export type RedisListeningCallback = (host: string, port: number, service: RedisConnector, context: Context) => void
+export type RedisConnectionCallback = (host: string, port: number, service: RedisConnector, context: Context) => void
 
 export class RedisConnector extends Service {
   connection: RedisClientType
 
-  onReady: RedisListeningCallback
+  onConnected: RedisConnectionCallback
+  onDisconnected: RedisConnectionCallback
 
   constructor(params: RedisParamsInterface) {
     let map = new Map()
@@ -83,14 +84,18 @@ export class RedisConnector extends Service {
 
   override async onMount() {
     await this.connect()
+    await super.onMount()
   }
 
   override async afterMount() {
-    if (this.onReady) this.onReady(this.params.get(DB_HOST), this.params.get(DB_PORT) as number, this, this.context)
+    if (this.onConnected) this.onConnected(this.params.get(DB_HOST), this.params.get(DB_PORT) as number, this, this.context)
+    await super.afterMount()
   }
 
   override async beforeReset() {
     await this.disconnect()
+    if (this.onDisconnected) this.onDisconnected(this.params.get(DB_HOST), this.params.get(DB_PORT) as number, this, this.context)
+    await super.beforeReset()
   }
 
   override async onReset() {
@@ -101,14 +106,22 @@ export class RedisConnector extends Service {
       url: `redis://${cred}${this.params.get(DB_HOST)}:${this.params.get(DB_PORT)}`
     })
     await this.connect()
+    await super.onReset()
   }
 
   override async afterReset() {
-    if (this.onReady) this.onReady(this.params.get(DB_HOST), this.params.get(DB_PORT) as number, this, this.context)
+    if (this.onConnected) this.onConnected(this.params.get(DB_HOST), this.params.get(DB_PORT) as number, this, this.context)
+    await super.afterReset()
   }
 
   override async onEject() {
     await this.disconnect()
+    await super.onEject()
+  }
+
+  override async afterEject() {
+    if (this.onDisconnected) this.onDisconnected(this.params.get(DB_HOST), this.params.get(DB_PORT) as number, this, this.context)
+    await super.afterEject()
   }
 
   async ping() {

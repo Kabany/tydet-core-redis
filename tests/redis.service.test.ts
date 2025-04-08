@@ -1,4 +1,3 @@
-import { RedisCoreError } from "../src/redis.error";
 import { RedisConnector } from "../src/redis.service";
 import { Context } from "tydet-core";
 

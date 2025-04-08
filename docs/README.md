@@ -84,11 +84,20 @@ It's a combination between DEL and HDEL methods.
 
 The are some callbacks that you can define on the configuration of this service. The callbacks are called for the following events:
 
-#### `onReady(host: string, port: number, service: RedisConnector, context: Context) => void`
+#### `onConnected(host: string, port: number, service: RedisConnector, context: Context) => void`
 
 - **host**: The host defined in the connection settings
 - **port**: The port defined in the connection settings
-- **service**: The Express Service.
+- **service**: The Redis Connector Service.
 - **context**: The TyDeT Context.
 
-This callback is executed when the redis connector is ready.
+This callback is executed when the Redis connection is ready.
+
+#### `onDisconnected(host: string, port: number, service: RedisConnector, context: Context) => void`
+
+- **host**: The host defined in the connection settings
+- **port**: The port defined in the connection settings
+- **service**: The Redis Connector Service.
+- **context**: The TyDeT Context.
+
+This callback is executed when the Redis connection is closed.
